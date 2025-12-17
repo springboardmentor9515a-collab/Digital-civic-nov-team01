@@ -1,76 +1,79 @@
-/* Placeholder for styles in App.css or index.css */
-.auth-container {
-    max-width: 400px;
-    margin: 60px auto;
-    padding: 30px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
+/* Add to your App.css or index.css */
 
-.auth-header {
+/* --- New Layout Container (Outer Box) --- */
+.login-page-container {
     display: flex;
-    margin-bottom: 30px;
-    border-bottom: 2px solid #ddd;
+    max-width: 900px; /* Adjust size to fit both panels */
+    margin: 60px auto;
+    border-radius: 12px;
+    overflow: hidden; 
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); 
+    background-color: white;
 }
 
-.auth-tab {
-    padding: 10px 20px;
-    flex-grow: 1;
-    cursor: pointer;
-    text-align: center;
-    font-weight: bold;
-    background-color: transparent;
-    border: none;
-    color: #666;
+/* --- Blue Marketing Panel (Left Side) --- */
+.marketing-panel {
+    width: 40%;
+    padding: 40px;
+    background-color: #007bff; /* Civix Blue */
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
-.auth-tab.active {
-    color: #007bff;
-    border: 1px solid #007bff;
-    border-bottom: none;
-    border-radius: 6px 6px 0 0;
-    margin-bottom: -2px; /* Pulls the tab slightly over the border */
-    background-color: #fff;
+.marketing-title {
+    font-size: 32px;
+    margin-bottom: 5px;
 }
 
-.form-group {
+.marketing-subtitle {
+    font-size: 18px;
+    font-weight: 300;
     margin-bottom: 20px;
 }
 
-label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
-    color: #333;
-}
-
-input[type="text"],
-input[type="email"],
-input[type="password"] {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    box-sizing: border-box; 
-    font-size: 16px;
-}
-
-.primary-button {
-    width: 100%;
-    padding: 14px;
-    background-color: #007bff; /* Civix Blue */
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 18px;
-    font-weight: bold;
-    margin-top: 25px;
-}
-
-.switch-auth {
-    text-align: center;
-    margin-top: 20px;
+.marketing-text {
     font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.feature-list {
+    list-style: none;
+    padding: 0;
+}
+
+.feature-list li {
+    font-size: 15px;
+    margin-bottom: 12px;
+    font-weight: 500;
+    position: relative;
+    padding-left: 25px;
+}
+/* Simple checkmark icon */
+.feature-list li::before {
+    content: '✅'; 
+    position: absolute;
+    left: 0;
+    font-size: 14px;
+}
+
+
+/* --- Form Panel (Right Side) --- */
+.auth-form-panel {
+    width: 60%;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Ensure the inner container respects the new layout */
+.auth-container { 
+    max-width: 100%;
+    margin: 0; 
+    padding: 0;
+    box-shadow: none; 
+    border-radius: 0;
 }
