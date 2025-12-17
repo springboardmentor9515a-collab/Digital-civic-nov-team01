@@ -1,27 +1,59 @@
-// client/src/App.jsx
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+// src/App.jsx
+import React, { useState, useEffect } from 'react';
+import { AuthProvider, useAuth } from './context/AuthContext.jsx';
+import LoginPage from './pages/Login.jsx';
+import RegisterPage from './pages/Register.jsx';
+import Dashboard from './pages/Dashboard.jsx';
+import './App.css'; 
 
-// Import Pages
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
-import './index.css';
+// Component that handles the actual view switching
+const AppRouter = () => {
+    const { isAuthenticated, login, user } = useAuth();
+    const [currentView, setCurrentView] = useState('login'); // 'login', 'register', 'dashboard'
 
-function App() {
-  return (
-    <Router>
-      <Routes>
-        {/* If user goes to home "/", redirect to Dashboard */}
-        <Route path="/" element={<Navigate to="/Dashboard" replace />} />
+    // If authenticated, always show dashboard, otherwise respect current view state
+    useEffect(() => {
+        if (isAuthenticated) {
+            setCurrentView('dashboard');
+        } else if (currentView === 'dashboard') {
+            setCurrentView('login');
+        }
+    }, [isAuthenticated]);
 
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+    // Handlers to pass to Login/Register pages
+    const handleLoginSuccess = (userData) => {
+        login(userData);
+        setCurrentView('dashboard');
+    };
 
-        {/* Unprotected Dashboard for testing */}
-        <Route path="/Dashboard" element={<Dashboard />} />
-      </Routes>
-    </Router>
-  );
-}
+    const handleRegisterSuccess = () => {
+        setCurrentView('login');
+    };
+
+    if (isAuthenticated) {
+        return <Dashboard user={user} />;
+    }
+
+    switch (currentView) {
+        case 'register':
+            return <RegisterPage 
+                        onNavigateToLogin={() => setCurrentView('login')} 
+                        onRegisterSuccess={handleRegisterSuccess}
+                    />;
+        case 'login':
+        default:
+            return <LoginPage 
+                        onNavigateToRegister={() => setCurrentView('register')} 
+                        onLoginSuccess={handleLoginSuccess}
+                    />;
+    }
+};
+
+// Main App component wrapped in the AuthProvider
+const App = () => (
+    <AuthProvider>
+        <AppRouter />
+    </AuthProvider>
+);
 
 export default App;
