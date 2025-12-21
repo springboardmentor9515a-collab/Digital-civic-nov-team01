@@ -4,12 +4,56 @@ import '../App.css';
 
 const RegisterPage = ({ onNavigateToLogin }) => {
   const { register } = useAuth();
-  const [formData, setFormData] = useState({ name: '', email: '', password: '', location: '', role: 'citizen' });
+
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    role: 'citizen',
+  });
+
+  const [location, setLocation] = useState({
+    latitude: null,
+    longitude: null,
+  });
+
+  const [locationError, setLocationError] = useState('');
+
+  // 📍 Detect user location using Geolocation API
+  const detectLocation = () => {
+    if (!navigator.geolocation) {
+      setLocationError('Geolocation is not supported by your browser');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+        setLocationError('');
+      },
+      (error) => {
+        setLocationError('Location permission denied or unavailable');
+      }
+    );
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!location.latitude || !location.longitude) {
+      alert('Please detect your location before registering');
+      return;
+    }
+
     try {
-      await register(formData);
+      await register({
+        ...formData,
+        latitude: location.latitude,
+        longitude: location.longitude,
+      });
       onNavigateToLogin();
     } catch (err) {
       alert(err.message);
@@ -18,60 +62,132 @@ const RegisterPage = ({ onNavigateToLogin }) => {
 
   return (
     <div className="auth-page-wrapper">
-      {/* Left Panel remains identical for branding consistency */}
+      {/* LEFT PANEL */}
       <div className="info-sidebar">
         <div className="brand-section">
           <h1>🏛️ Civix</h1>
           <h2>Digital Civic Engagement Platform</h2>
-          <p className="brand-description">Civix enables citizens to engage in local governance through petitions, voting, and tracking officials' responses.</p>
-          <div className="feature-list">
-             {/* Feature items same as Login for UI consistency */}
-          </div>
+          <p className="brand-description">
+            Civix enables citizens to engage in local governance through petitions,
+            voting, and tracking officials' responses.
+          </p>
         </div>
       </div>
 
+      {/* FORM PANEL */}
       <div className="form-section">
-        <div className="auth-card" style={{padding: '35px'}}>
-          <h2 style={{textAlign: 'center', marginBottom: '10px'}}>Welcome to Civix</h2>
-          <p style={{textAlign: 'center', color: '#666', fontSize: '14px', marginBottom: '25px'}}>Join our platform to make your voice heard.</p>
-          
-          <div className="auth-tabs" style={{display: 'flex', borderBottom: '1px solid #ddd', marginBottom: '20px'}}>
-            <button className="auth-tab" onClick={onNavigateToLogin} style={{flex: 1, padding: '12px', border: 'none', background: 'none', cursor: 'pointer', color: '#666'}}>Login</button>
-            <button className="auth-tab active" style={{flex: 1, padding: '12px', border: 'none', background: 'none', borderBottom: '2px solid var(--primary-color)', fontWeight: 'bold', color: 'var(--primary-color)'}}>Register</button>
-          </div>
+        <div className="auth-card" style={{ padding: '35px' }}>
+          <h2 style={{ textAlign: 'center' }}>Welcome to Civix</h2>
 
           <form onSubmit={handleSubmit}>
-            <div className="form-group" style={{marginBottom: '15px'}}>
-              <label style={{display: 'block', marginBottom: '5px', fontWeight: '600', fontSize: '14px'}}>Full Name</label>
-              <input type="text" placeholder="Jane Doe" onChange={(e) => setFormData({...formData, name: e.target.value})} required style={{width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ddd'}} />
+            {/* NAME */}
+            <div className="form-group">
+              <label>Full Name</label>
+              <input
+                type="text"
+                required
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+              />
             </div>
-            <div className="form-group" style={{marginBottom: '15px'}}>
-              <label style={{display: 'block', marginBottom: '5px', fontWeight: '600', fontSize: '14px'}}>Email</label>
-              <input type="email" placeholder="your@email.com" onChange={(e) => setFormData({...formData, email: e.target.value})} required style={{width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ddd'}} />
+
+            {/* EMAIL */}
+            <div className="form-group">
+              <label>Email</label>
+              <input
+                type="email"
+                required
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+              />
             </div>
-            <div className="form-group" style={{marginBottom: '15px'}}>
-              <label style={{display: 'block', marginBottom: '5px', fontWeight: '600', fontSize: '14px'}}>Password</label>
-              <input type="password" placeholder="••••••••" onChange={(e) => setFormData({...formData, password: e.target.value})} required style={{width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ddd'}} />
+
+            {/* PASSWORD */}
+            <div className="form-group">
+              <label>Password</label>
+              <input
+                type="password"
+                required
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+              />
             </div>
-            <div className="form-group" style={{marginBottom: '15px'}}>
-              <label style={{display: 'block', marginBottom: '5px', fontWeight: '600', fontSize: '14px'}}>Location</label>
-              <input type="text" placeholder="Portland, OR" onChange={(e) => setFormData({...formData, location: e.target.value})} required style={{width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ddd'}} />
+
+            {/* LOCATION */}
+            <div className="form-group">
+              <label>Location</label>
+
+              <button
+                type="button"
+                onClick={detectLocation}
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  background: '#f0f0f0',
+                  borderRadius: '6px',
+                  border: '1px solid #ddd',
+                  cursor: 'pointer',
+                }}
+              >
+                📍 Detect My Location
+              </button>
+
+              {location.latitude && (
+                <p style={{ fontSize: '12px', marginTop: '8px' }}>
+                  Latitude: {location.latitude.toFixed(4)} <br />
+                  Longitude: {location.longitude.toFixed(4)}
+                </p>
+              )}
+
+              {locationError && (
+                <p style={{ color: 'red', fontSize: '12px' }}>
+                  {locationError}
+                </p>
+              )}
             </div>
-            <div className="form-group" style={{marginBottom: '20px'}}>
-              <label style={{display: 'block', marginBottom: '10px', fontWeight: '600', fontSize: '14px'}}>I am registering as:</label>
-              <div style={{display: 'flex', gap: '20px', fontSize: '14px'}}>
-                <label style={{display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer'}}>
-                  <input type="radio" name="role" value="citizen" checked={formData.role === 'citizen'} onChange={() => setFormData({...formData, role: 'citizen'})} /> Citizen
-                </label>
-                <label style={{display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer'}}>
-                  <input type="radio" name="role" value="official" checked={formData.role === 'official'} onChange={() => setFormData({...formData, role: 'official'})} /> Public Official
-                </label>
-              </div>
+
+            {/* ROLE */}
+            <div className="form-group">
+              <label>I am registering as:</label>
+              <label>
+                <input
+                  type="radio"
+                  checked={formData.role === 'citizen'}
+                  onChange={() =>
+                    setFormData({ ...formData, role: 'citizen' })
+                  }
+                />{' '}
+                Citizen
+              </label>
+
+              <label style={{ marginLeft: '20px' }}>
+                <input
+                  type="radio"
+                  checked={formData.role === 'official'}
+                  onChange={() =>
+                    setFormData({ ...formData, role: 'official' })
+                  }
+                />{' '}
+                Public Official
+              </label>
             </div>
-            <button type="submit" className="primary-button" style={{width: '100%', padding: '14px', background: 'var(--primary-color)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer'}}>Create Account</button>
+
+            <button type="submit" className="primary-button">
+              Create Account
+            </button>
           </form>
-          <p style={{textAlign: 'center', marginTop: '15px', fontSize: '13px'}}>
-            Already have an account? <span onClick={onNavigateToLogin} style={{color: 'var(--primary-color)', fontWeight: 'bold', cursor: 'pointer'}}>Sign in</span>
+
+          <p style={{ textAlign: 'center', marginTop: '15px' }}>
+            Already have an account?{' '}
+            <span
+              onClick={onNavigateToLogin}
+              style={{ cursor: 'pointer', fontWeight: 'bold' }}
+            >
+              Sign in
+            </span>
           </p>
         </div>
       </div>
@@ -80,3 +196,4 @@ const RegisterPage = ({ onNavigateToLogin }) => {
 };
 
 export default RegisterPage;
+
