@@ -25,18 +25,19 @@ const RegisterPage = () => {
 
   return (
     <div className="auth-page-wrapper">
-      {/* Left Panel remains identical for branding consistency */}
+      {/* LEFT PANEL */}
       <div className="info-sidebar">
         <div className="brand-section">
           <h1>🏛️ Civix</h1>
           <h2>Digital Civic Engagement Platform</h2>
-          <p className="brand-description">Civix enables citizens to engage in local governance through petitions, voting, and tracking officials' responses.</p>
-          <div className="feature-list">
-             {/* Feature items same as Login for UI consistency */}
-          </div>
+          <p className="brand-description">
+            Civix enables citizens to engage in local governance through petitions,
+            voting, and tracking officials' responses.
+          </p>
         </div>
       </div>
 
+      {/* FORM PANEL */}
       <div className="form-section">
         <div className="auth-card" style={{padding: '35px'}}>
           <h2 style={{textAlign: 'center', marginBottom: '10px'}}>Welcome to Civix</h2>
@@ -64,16 +65,31 @@ const RegisterPage = () => {
               <label style={{display: 'block', marginBottom: '5px', fontWeight: '600', fontSize: '14px'}}>Location</label>
               <input type="text" placeholder="Portland, OR" value={formData.location} onChange={(e) => setFormData({...formData, location: e.target.value})} required style={{width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ddd'}} />
             </div>
-            <div className="form-group" style={{marginBottom: '20px'}}>
-              <label style={{display: 'block', marginBottom: '10px', fontWeight: '600', fontSize: '14px'}}>I am registering as:</label>
-              <div style={{display: 'flex', gap: '20px', fontSize: '14px'}}>
-                <label style={{display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer'}}>
-                  <input type="radio" name="role" value="citizen" checked={formData.role === 'citizen'} onChange={() => setFormData({...formData, role: 'citizen'})} /> Citizen
-                </label>
-                <label style={{display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer'}}>
-                  <input type="radio" name="role" value="official" checked={formData.role === 'official'} onChange={() => setFormData({...formData, role: 'official'})} /> Public Official
-                </label>
-              </div>
+
+            {/* ROLE */}
+            <div className="form-group">
+              <label>I am registering as:</label>
+              <label>
+                <input
+                  type="radio"
+                  checked={formData.role === 'citizen'}
+                  onChange={() =>
+                    setFormData({ ...formData, role: 'citizen' })
+                  }
+                />{' '}
+                Citizen
+              </label>
+
+              <label style={{ marginLeft: '20px' }}>
+                <input
+                  type="radio"
+                  checked={formData.role === 'official'}
+                  onChange={() =>
+                    setFormData({ ...formData, role: 'official' })
+                  }
+                />{' '}
+                Public Official
+              </label>
             </div>
             <button type="submit" className="primary-button" disabled={loading} style={{width: '100%', padding: '14px', background: 'var(--primary-color)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: loading ? 'not-allowed' : 'pointer'}}>{loading ? 'Creating...' : 'Create Account'}</button>
           </form>
@@ -87,3 +103,4 @@ const RegisterPage = () => {
 };
 
 export default RegisterPage;
+
