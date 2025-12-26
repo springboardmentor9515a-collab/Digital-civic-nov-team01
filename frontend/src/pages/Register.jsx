@@ -1,18 +1,25 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import '../App.css';
 
-const RegisterPage = ({ onNavigateToLogin }) => {
+const RegisterPage = () => {
   const { register } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({ name: '', email: '', password: '', location: '', role: 'citizen' });
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       await register(formData);
-      onNavigateToLogin();
+      // after successful registration go to dashboard
+      navigate('/dashboard', { replace: true });
     } catch (err) {
-      alert(err.message);
+      alert(err.message || 'Registration failed');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -36,26 +43,26 @@ const RegisterPage = ({ onNavigateToLogin }) => {
           <p style={{textAlign: 'center', color: '#666', fontSize: '14px', marginBottom: '25px'}}>Join our platform to make your voice heard.</p>
           
           <div className="auth-tabs" style={{display: 'flex', borderBottom: '1px solid #ddd', marginBottom: '20px'}}>
-            <button className="auth-tab" onClick={onNavigateToLogin} style={{flex: 1, padding: '12px', border: 'none', background: 'none', cursor: 'pointer', color: '#666'}}>Login</button>
+            <button className="auth-tab" onClick={() => navigate('/login')} style={{flex: 1, padding: '12px', border: 'none', background: 'none', cursor: 'pointer', color: '#666'}}>Login</button>
             <button className="auth-tab active" style={{flex: 1, padding: '12px', border: 'none', background: 'none', borderBottom: '2px solid var(--primary-color)', fontWeight: 'bold', color: 'var(--primary-color)'}}>Register</button>
           </div>
 
           <form onSubmit={handleSubmit}>
             <div className="form-group" style={{marginBottom: '15px'}}>
               <label style={{display: 'block', marginBottom: '5px', fontWeight: '600', fontSize: '14px'}}>Full Name</label>
-              <input type="text" placeholder="Jane Doe" onChange={(e) => setFormData({...formData, name: e.target.value})} required style={{width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ddd'}} />
+              <input type="text" placeholder="Jane Doe" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} required style={{width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ddd'}} />
             </div>
             <div className="form-group" style={{marginBottom: '15px'}}>
               <label style={{display: 'block', marginBottom: '5px', fontWeight: '600', fontSize: '14px'}}>Email</label>
-              <input type="email" placeholder="your@email.com" onChange={(e) => setFormData({...formData, email: e.target.value})} required style={{width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ddd'}} />
+              <input type="email" placeholder="your@email.com" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} required style={{width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ddd'}} />
             </div>
             <div className="form-group" style={{marginBottom: '15px'}}>
               <label style={{display: 'block', marginBottom: '5px', fontWeight: '600', fontSize: '14px'}}>Password</label>
-              <input type="password" placeholder="••••••••" onChange={(e) => setFormData({...formData, password: e.target.value})} required style={{width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ddd'}} />
+              <input type="password" placeholder="••••••••" value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} required style={{width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ddd'}} />
             </div>
             <div className="form-group" style={{marginBottom: '15px'}}>
               <label style={{display: 'block', marginBottom: '5px', fontWeight: '600', fontSize: '14px'}}>Location</label>
-              <input type="text" placeholder="Portland, OR" onChange={(e) => setFormData({...formData, location: e.target.value})} required style={{width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ddd'}} />
+              <input type="text" placeholder="Portland, OR" value={formData.location} onChange={(e) => setFormData({...formData, location: e.target.value})} required style={{width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ddd'}} />
             </div>
             <div className="form-group" style={{marginBottom: '20px'}}>
               <label style={{display: 'block', marginBottom: '10px', fontWeight: '600', fontSize: '14px'}}>I am registering as:</label>
@@ -68,10 +75,10 @@ const RegisterPage = ({ onNavigateToLogin }) => {
                 </label>
               </div>
             </div>
-            <button type="submit" className="primary-button" style={{width: '100%', padding: '14px', background: 'var(--primary-color)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer'}}>Create Account</button>
+            <button type="submit" className="primary-button" disabled={loading} style={{width: '100%', padding: '14px', background: 'var(--primary-color)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: loading ? 'not-allowed' : 'pointer'}}>{loading ? 'Creating...' : 'Create Account'}</button>
           </form>
           <p style={{textAlign: 'center', marginTop: '15px', fontSize: '13px'}}>
-            Already have an account? <span onClick={onNavigateToLogin} style={{color: 'var(--primary-color)', fontWeight: 'bold', cursor: 'pointer'}}>Sign in</span>
+            Already have an account? <span onClick={() => navigate('/login')} style={{color: 'var(--primary-color)', fontWeight: 'bold', cursor: 'pointer'}}>Sign in</span>
           </p>
         </div>
       </div>
