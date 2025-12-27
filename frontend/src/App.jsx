@@ -1,37 +1,70 @@
-// src/App.jsx
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext.jsx';
-import LoginPage from './pages/Login.jsx';
-import RegisterPage from './pages/Register.jsx';
-import Dashboard from './pages/Dashboard.jsx';
-import Petitions from './pages/Petitions.jsx';
-import PetitionList from './pages/petitionList.jsx';
-//import Polls from './pages/Polls.jsx';
-//import Officials from './pages/Officials.jsx';
-//import Reports from './pages/Reports.jsx';
-//import Settings from './pages/Settings.jsx';
-//import './App.css';
+import React from "react";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
 
-const App = () => (
-  <AuthProvider>
-    <Router>
+// Components
+import Navbar from "./components/Navbar";
+
+// Pages
+import Home from "./pages/Home";         // Landing Page
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+
+// Petition Pages
+import PetitionList from "./pages/PetitionList";
+import CreatePetition from "./pages/CreatePetition";
+
+// Poll Pages
+import PollList from "./pages/PollList";
+import CreatePoll from "./pages/CreatePoll";
+
+// Report Pages
+import Reports from "./pages/Reports";
+
+function App() {
+  return (
+    <AuthProvider>
+      <Layout />
+    </AuthProvider>
+  );
+}
+
+// Layout component to handle conditional Navbar
+const Layout = () => {
+  const location = useLocation();
+
+  // Define paths where Navbar should be HIDDEN
+  const hideNavbarPaths = ["/", "/login", "/register"];
+  const showNavbar = !hideNavbarPaths.includes(location.pathname);
+
+  return (
+    <div className="app-container">
+      {/* Show Navbar only on inner pages */}
+      {showNavbar && <Navbar />}
+
       <Routes>
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        {/* --- Public Routes (No Navbar) --- */}
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
+        {/* --- Protected Routes (With Navbar) --- */}
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/petition" element={<Petitions />} />
-        <Route path="/petitionlist" element={<PetitionList />} />
         
+        <Route path="/petitions" element={<PetitionList />} />
+        <Route path="/create-petition" element={<CreatePetition />} />
 
+        <Route path="/polls" element={<PollList />} />
+        <Route path="/create-poll" element={<CreatePoll />} />
 
-        {/* fallback */}
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/reports" element={<Reports />} />
+
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
-    </Router>
-  </AuthProvider>
-);
+    </div>
+  );
+};
 
 export default App;
