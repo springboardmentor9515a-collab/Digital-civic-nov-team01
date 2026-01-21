@@ -99,4 +99,4 @@ POST/api/petitions/:id/sign         Sign a petition (Auth required)
 
 
 🤝 ContributingFork the repository.
-Create a new branch (git checkout -b feature-name).Commit your changes (git commit -m 'Added new feature').Push to the branch (git push origin feature-name).Open a Pull Request.
+Create a new branch (git checkout -b feature-name).Commit your changes (git commit -m 'Added new feature').Push to the branch (git push origin feature-name).Open a Pull Request completed.
